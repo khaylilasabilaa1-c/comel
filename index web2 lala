@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mau Call? </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #ff6ec4 0%, #ff9a9e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        h1 {
+            color: #ff6ec4;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .emoji {
+            font-size: 5em;
+            margin: 20px 0;
+            animation: rotate 2s infinite;
+        }
+
+        @keyframes rotate {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        p {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .yes-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .yes-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.5);
+        }
+
+        .no-btn {
+            background: #ddd;
+            color: #666;
+            position: relative;
+        }
+
+        .hearts {
+            position: fixed;
+            pointer-events: none;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 2em;
+            animation: float 3s ease-in infinite;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0% { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% { 
+                opacity: 0;
+                transform: translateY(-1000px) scale(0);
+            }
+        }
+
+        .success {
+            display: none;
+        }
+
+        .success.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .success h2 {
+            color: #f5576c;
+            font-size: 2em;
+            margin: 20px 0;
+        }
+
+        .call-animation {
+            font-size: 4em;
+            animation: ring 1s infinite;
+        }
+
+        @keyframes ring {
+            0%, 100% { transform: rotate(0deg); }
+            10%, 30% { transform: rotate(-10deg); }
+            20%, 40% { transform: rotate(10deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts" id="hearts"></div>
+    
+    <div class="container">
+        <div class="question" id="question">
+            <h1>P,Riva! 🐻</h1>
+            <div class="emoji">📞</div>
+            <p>Lagi sibuk ga? Mau ngobrol ga?<br>Kapan kamu call aku? Aku nungguin tau!</p>
+            
+            <div class="buttons">
+                <button class="yes-btn" onclick="sayYes()">Mau Banget! </button>
+                <button class="no-btn" id="noBtn" onmouseover="moveButton()" onclick="tryNo()">Gamau </button>
+            </div>
+        </div>
+
+        <div class="success" id="success">
+            <div class="call-animation">📞</div>
+            <h2>Yh, ak tunggu </h2>
+            <p style="font-size: 1.1em; color: #ff6ec4; margin-top: 20px;">
+                Kata ak sih cepetan <br>
+                Buruan call ak sekarang!
+            </p>
+            <div class="emoji" style="animation: none;">😍✨💖</div>
+        </div>
+    </div>
+
+    <script>
+        let noClickCount = 0;
+        
+        function moveButton() {
+            const btn = document.getElementById('noBtn');
+            const container = document.querySelector('.container');
+            const containerRect = container.getBoundingClientRect();
+            
+            const maxX = containerRect.width - btn.offsetWidth - 80;
+            const maxY = containerRect.height - btn.offsetHeight - 80;
+            
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            btn.style.position = 'absolute';
+            btn.style.left = randomX + 40 + 'px';
+            btn.style.top = randomY + 40 + 'px';
+            btn.style.transition = 'all 0.3s';
+        }
+
+        function tryNo() {
+            noClickCount++;
+            const messages = [
+                "Yakin gamau? 🥺",
+                "Masa iya gamau sih? 😢",
+                "Serius Gamau nich?...",
+                "Oke deh kalo gamau... 💔"
+            ];
+            
+            if (noClickCount < messages.length) {
+                alert(messages[noClickCount - 1]);
+            }
+        }
+
+        function sayYes() {
+            document.getElementById('question').classList.remove('show');
+            document.getElementById('question').style.display = 'none';
+            document.getElementById('success').classList.add('show');
+            
+            createHearts();
+            
+            // Confetti effect
+            for(let i = 0; i < 50; i++) {
+                setTimeout(() => createHeart(), i * 100);
+            }
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '🐻';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDelay = Math.random() * 2 + 's';
+            document.getElementById('hearts').appendChild(heart);
+            
+            setTimeout(() => heart.remove(), 3000);
+        }
+
+        function createHearts() {
+            setInterval(() => {
+                if(Math.random() > 0.5) {
+                    createHeart();
+                }
+            }, 300);
+        }
+    </script>
+</body>
+</html>
